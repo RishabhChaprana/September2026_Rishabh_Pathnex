@@ -1,0 +1,3 @@
+1. 4hour - First of all i take the morning class.
+2. 1 hr - Then i revise the topics.
+3. 30 min  - try to logging in ec2 instance throught moba,wsl and powershell4. 30 min - Now pushing the code on github using git.
