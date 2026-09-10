@@ -1,0 +1,3 @@
+1. 1hr - revision
+2. 1hr - git practise
+3. 30min - git push
