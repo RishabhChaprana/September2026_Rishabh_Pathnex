@@ -1,0 +1,4 @@
+3 hr - morning class
+1 hr - revision
+2 hr - k8s
+1 hr - terraform
