@@ -1,0 +1,3 @@
+4 hr - class
+1 hr - revision 
+1 min - git push
