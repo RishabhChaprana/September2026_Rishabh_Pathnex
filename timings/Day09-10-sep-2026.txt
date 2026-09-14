@@ -1,0 +1,3 @@
+3 hr - revision
+1 hr - understand code
+2 hr - git push
