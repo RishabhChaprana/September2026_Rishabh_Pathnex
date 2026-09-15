@@ -1,0 +1,104 @@
+# Day 09 -  Docker Integration with Jenkins & Github
+
+# Ansible - Setup Docker Container for Nginx
+
+- name: Setup Docker Container for Nginx
+  hosts: all
+  become: yes
+  tasks: 
+    - name: Pull Nginx image 
+      docker_image:
+        name: nginx
+        source: pull
+    - name: Run Nginx container
+      docker_container:
+        name: nginx_container
+        image: nginx
+        state: started
+        published_port:
+          - "8080:80"
+# Terraform - Ec2 with Auto Scaling Group
+
+resource "aws_launch_configuration" "example" {
+  name = "example-config"
+  image_id = "ami-01234abcd1234"
+  instance_type = "t3.medium"
+}
+resource "aws_autoscaling_group" "example" {
+  desired_capacity		= 2
+  max_size			= 3
+  min_size			= 1
+  vpc_zone_identifier		= ["subnet-123456789"]
+  launch_configuration		= aws_launch_configuration.exaple.id
+}
+
+# Kubernetes - Horizontal Pod Autoscaling (HPA)
+
+apiVersion: app/v1
+kind: Deployment
+metadata:
+  name: pathnex-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pathnex-app
+  template:
+    metadata:
+      lables:
+   	app: pathnex-app
+    spec:
+      container:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: pathnex-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: app/v1
+    kind: Deployment
+    name: pathnex-deployment
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+
+# Jenkinsfile - Deploy to Kubernetes
+pipline {
+   agent any
+   stages {
+       stage ('Deploy to Kubernetes') {
+           steps {
+	       script {
+		   sh 'kubectl apply -f deployment.yaml'
+	       }
+           }
+       }
+    }
+}
+
+# GitLab CI/CD - Deploy to Kubernetes
+
+stages: 
+  - deploy
+
+
+deploy:
+  stage: deploy
+  script:
+    - kuberctl apply -f kubernetes/deployment.yaml
+
+# Docker 
+#Enviroment Variables
+
+FROM ubuntu:22.04
+ENV INSTITUTR=Pathnex
+ENV COURSE=DevOps
+CMD echo "$INSTITITE - $COURSE"
+       
