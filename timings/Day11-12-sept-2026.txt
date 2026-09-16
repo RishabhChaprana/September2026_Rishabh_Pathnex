@@ -1,0 +1,5 @@
+3hr - class
+1 hr - evening class
+2 hr - session
+2 hr - revision
+- hr - kubeernetes concepts 
