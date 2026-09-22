@@ -1,0 +1,6 @@
+4 hr - class
+2 hr - revision
+3 hr - kubernetes
+1 hr - evening class
+1 hr - git push
+
