@@ -1,0 +1,119 @@
+# Day 21 - Disaster Recovery and Backup Strategies
+
+# Ansible - Backup and Restore Files
+
+- name: Backup and Restore Files
+  hosts: all
+  become: yes
+  tasks: 
+    - name: Create backup of /etc directory
+      command: tar -czvf /tmp/etc-backup.tar.gz /etc
+    - name: Copy backup to remote service
+      copy:
+        src: /tmp/etc-backup.tar.gz
+        dest: /tmp/etc-backup.tar.gz
+    - name: Restore backup from remote server
+      command: tar -xvzf /tmp/etc-backup.tar.gz -C /
+
+# Terraform - Create s3 Bucket with Cross-Region Replication
+
+resource "aws_s3_bucket" "pathnex_bucket" {
+  bucket = "pathnex-backup-bucket"
+  region = "us-east-1"
+
+  versioning {
+    enabled = true
+    }
+  }
+resouce "aws_s3_bucket" "pathnex_backup_bucket_eu" {
+  bucket = "pathnex-backup-bucket-eu"
+  region = "eu-west-1"
+
+  versioning {
+    enabled = true
+    }
+}
+
+resource "aws_s3_bucket_object" "pathnex_backup_files" {
+  bucket = aws_s3_bucket.pathnex_bucket.bucket
+  key	 = "backup.tar.gz"
+  source = "pathnex-backup.tar.gz"
+}
+
+# Kubernetes - Disaster Recovery with Presistent Volumes
+
+apiVersion: app/v1
+kind: Statefulset
+metadata:
+  name: pathnex-statefulset
+spec:
+  serviceName: "pathnex"
+  replicas: 3
+  selector:
+    matchLablels:
+      app: pathnex
+  template:
+    metadata:
+      labels:
+        app: pathnex
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          volumeMounts:
+ 	    - mountPath: /usr/share/nginx/html
+              name: web-content
+  volumeClaimTempaltes:
+  - metadata:
+      name: web-content
+    spec: 
+      accessModes: [ "ReadWriteOnce" ]  
+      resource: 
+        requests:
+          storage: 5Gi
+
+# Jenkinsfile - Backup Strategy for jenkins Workspace
+
+pipline {
+   agent any
+   stages {
+       stage('Backup') {
+           steps {
+               echo 'Backup up jenkins workspace...'
+               sh 'tar -azvf /tmp/jenkins-backup.tar.gz ${WORKSPACE}'
+           }
+       }
+       stage('Restore') {
+         steps {
+             echo 'Restoring Jenkins workspace...'
+	     sh 'tar -xvzf /tmp/jenkins-backup.tar.gz -C ${WORKSPACE}'
+         }
+      }
+   }
+} 
+
+# GitLab CI/CD - Backup and Restore Deployment Files
+
+stages:
+  - backup
+  - restore
+
+backup: 
+  stage: backup
+  script:
+    - tar -czvf /tmp/backup.tar.gz kuberbetes/deploymwnt.yaml
+
+restore:
+  stage: restore
+  script: 
+    - tar -xvzf /tmp/backup.tar.gz -C kuberbetes/
+
+# Docker
+
+version: '3'
+services:
+  web:
+    image: nginx
+    container_name: pathnex-nginx
+    ports:
+      - "80:80"
