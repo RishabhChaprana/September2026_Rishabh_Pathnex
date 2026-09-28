@@ -1,0 +1,11 @@
+###################################
+
+4 hr - morning class
+
+2 hr - revision
+
+4 hr - evening class
+
+30 min - git push
+
+###################################
