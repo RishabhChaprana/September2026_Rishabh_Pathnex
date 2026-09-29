@@ -1,0 +1,96 @@
+# Day24 - Advanced Terraform Modules and CI/CD Pipline Scaling
+
+# Ansible - Deploy Docker Containers with Kubernetes Using Helm
+
+'''yaml
+
+- name: Deploy Docker Containers with Helm
+  hosts: localhost
+  tasks:
+    - name: Install Helm 
+      command: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+    - name: Deploy microservices with helm
+      command: helm install pathnex-app ./microservice-chart
+
+# Terraform - Multi-Module INFRASTRUCTURE With Outputs
+ 
+module "pathnex_vpc" {
+  source = "./vpc"
+  }
+
+module "pathnex_instance" {
+  source = "./instance"
+  vpc_id = module.pathnex_vpc.vpc_id
+ }
+
+output "instance_id" {
+  value = module.pathnex_instance.instance_id
+}
+
+# Kubernetes - Helm-based Auto-Scaling Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pathnex-web-app
+spec: 
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pathnex-web-app
+    template:
+      metadata:
+        labels:
+      	  app: pathnex-web-app
+      spec:
+        container:
+          - name: nginx
+            image: nginx
+	    ports:
+              - containerPort: 80
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaling
+metadata:
+  name: pathnex-web-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: pathnex-web-app
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilization: 80
+
+# Jenkinsfile - Scaling CI/CD Pipline
+
+pipline {
+   agent any 
+   stages {
+       stage('Scale Up') {
+           steps {
+               echo 'Scaling up Jenkins pipline agents for heavy workloads...'
+               // Simulating scaling logics
+           }
+       }
+       stage('Build') {
+           steps {
+               echo 'Building project...'
+           }
+       }
+       stage('Deploy') {
+           steps {
+               echo 'Deployment project...'
+           }
+       }
+    }
+}
+
+# Docker
+
+# Healthcheck
+
+FROM nginx
+HEALTHCHECK CMD curl --fail http://localhost || exit 1    
