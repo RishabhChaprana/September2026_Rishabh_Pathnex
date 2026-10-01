@@ -1,0 +1,6 @@
+####################
+
+3 hrs - study
+2 hrs -revision
+1 hr - git push
+####################
