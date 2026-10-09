@@ -1,0 +1,96 @@
+# Day33 - More Packages, Key Pair, Service
+
+# Ansible - Install Multiple Package
+
+---
+- name: Install packages for Pathnex
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Tools
+      yum:
+        name:
+          - git
+          - wget
+        state: present
+
+# Terraform - EC2 with Key Pair (c6i.8xlarge)
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_key_pair" "PathnexKey" {
+  key_name      = "PathnexKey"
+  public_key    = "ssh-rsa AAAA...."
+}
+
+resouce "aws_instance" "PathnexEC2" {
+  ami           = "ami-0hksdgfdhb5564"
+  instance_type = "c6i.8xlarge"
+  key_name      = aws_key_pair.PathnexKey.key_name
+
+  tags = {
+    Name = "Pathnex-EC2"
+   }
+  }
+
+# Kubernetes - Create ClusterIP Services
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pathnex-service
+spec:
+  selector:
+    app: pathnex-app
+  ports:
+    - port: 80
+      targetPort: 80
+
+# Parallel Builds
+
+# Jenkins Piplines - Parallel Build & Test
+
+pipline {
+   agent any
+   stages {
+       stage('Parallel Tasks') {
+           parallel {
+               stage('Build') {
+                   steps {
+                       sh 'mvn clean compile'
+                   }
+               }
+               stage('Test') {
+                   steps {
+                       sh 'mvn test'
+                   }
+               }
+           }
+       }
+    }
+}
+
+# GitLab CI - Parallel Jobs
+
+stages:
+  - build-test
+
+maven-build:
+  stage: build-test
+  image: maven:3.8.1-jdk-17
+  script:
+    - git clone https://github.com/Pathnex/sample-java-app.git
+    - cd sample-java-app
+    - mvn clean compile
+  parallel: 1
+
+maven-test:
+  stage: build-test
+  image: maven:3.8.1-jdk-17
+  script:
+    - cd sample-java-app
+    - mvn test
+  parallel: 1
+     
