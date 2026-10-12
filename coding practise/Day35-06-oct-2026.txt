@@ -1,0 +1,94 @@
+# Day06 - Debug Day
+
+Fix these broken Files:
+
+# Ansible (broken) but i am correcting it
+
+- name: Install nginx
+  hosts: all
+  become: yes
+  tasks: 
+    - name: Install nginx
+      yum: 
+        name: nginx
+        state: present
+
+# Terraform (i fix it)
+
+resouce "aws_instance" "BrokenEC2" {
+  ami			= "ami-01234abcd123abc"
+  instance_type		= "t2.micro"
+
+  tags = {
+    Name 		= "Broken"
+  }
+}
+
+# Kubernetes (Broken)
+
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: pathnex
+spec:
+  containers:
+    - name: app
+      image: nginx
+  
+# Debugging Piplines
+
+# Jenkins Pipline - Debugging
+
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Pathnex/sample-java-app.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean compile'
+             }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipline completed successfully'
+        }
+        failure {
+            echo 'Pipline failed Check the console logs'
+        }
+        always {
+            echo 'Pipline execution finished.'
+        }
+    }
+}
+
+# GitLAB CI - Dubugging
+
+stages:
+  - build 
+  - test
+
+build:
+  stage: build
+  image: maven:3.8.1-jdk-17
+  script:
+    - git clone https://github.com/Pathnex/sample-java-app.git
+    - cd sample-java-app
+    - mvn clean compile || { echo "Compile Failed"; exit 1; }
+
+test:
+  stage: test
+  image: maven:3.8.1-jdk-17
+  script:
+    - cd sample-java-app
+    - mvn test || { echo "Test failed"; exit 1; }     
