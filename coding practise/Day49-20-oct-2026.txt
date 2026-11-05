@@ -1,0 +1,55 @@
+#Day49 - Debuging Day
+
+# Ansible - Broken
+
+- name: Install stuff
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install stuff
+      yum: 
+        name: httpd
+        state: present
+
+# Terraform Broken
+
+resource "aws_instance" "Good" {
+  ami		= "ami-0abcd1234abcd"
+  instance_type = "c6i.8xlarge"
+ }
+
+# Kubernetes - Broken
+
+apiVersion: apps/v1
+kind:	Deployment
+metadata:
+  name: fixed-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fixed-app
+  template:
+    metadata:
+      labels:
+        app: fixed-app
+     spec:
+       containers:
+         - name: app
+           image: nginx
+
+# GitLab CI - Using CI/CD Variables
+
+stages:
+  - build
+
+variables:
+  INSTITUTE_NAME: "Pathnex"
+  API_KEY: "PLACEHOLDER_SECRET"
+
+build:
+  stage: build
+  image: alpine:latest
+  script:
+    - echo "Using secret $API_KEY for $INSTITUTE_NAME"
+
